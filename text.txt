@@ -1,0 +1,38 @@
+Buy In
+
+Nathan  450  
+David   250
+Francis 800
+Jamie   500
+
+Lost:
+Nathan  450
+David   250
+
+Tie:
+Jamie   500 
+
+Won:
+Francis 800
+
+
+what people owe:
+David   250
+Nathan  50
+Jamie   0
+
+Francis -300
+
+
+List of people who owe others money
+List of people who are owed money
+
+Loop:
+    if (owedPeople) is empty:
+        return
+        validate that there is nothing in (owePeople)
+    else:
+        check first value in (owePeople), subtract it against the top value of (owedPeople)
+        if there is a remainder, subtract that amount from the next value in the list.
+        Every time you subtract an amount, print to the screen, who is paying who what amount.
+        if a value in (owedPeople) is 0, pop it from the list

@@ -4,11 +4,12 @@ chipTotals = []
 buyBacks = []
 buyIn = 0
 totalChips = 0
+
 # count is for how many people were in your game loop
 count = 0
 
 
-def getTotalChips(chipTotals):
+def getTotalChipCount(chipTotals): 
     chipCount = 0
     j = 0
     for i in chipTotals:
@@ -20,18 +21,22 @@ def getTotalChips(chipTotals):
             j+=1
     return chipCount
 
-def distributeChips(firstNames, totalChips, chipTotals):
+
+def distributeChips(firstNames, chipCount, chipTotals):
     # Best Variable Names Ever
     owePeople = []
     owedPeople = []
     chipTotalsSorted = chipTotals.sort()
 
     # fill up owe and owed, people who broke even should be 
-    for chips in chipTotalsSorted:
+    for chips in range(len(chipTotalsSorted)):
         if chips <= 500:
             owePeople.append(chips)
         else: 
             owedPeople.append(chips)
+    print("owePeople : " + str(owePeople) + "\n" + "owedPeople: " + str(owedPeople))
+    
+
     
     
 
@@ -50,9 +55,13 @@ while count < numPeople:
     buyBacks.append(buyBack)
     count+=1
 
-print(firstNames, chipTotals, buyBacks)
+chipCount = getTotalChipCount(chipTotals)
 
-print(getTotalChips(chipTotals))
+print(firstNames, chipTotals, buyBacks)
+print("\n")
+print(chipTotals)
+print("\n")
+distributeChips(firstNames, chipCount, chipTotals)
 # math time 
 
 
