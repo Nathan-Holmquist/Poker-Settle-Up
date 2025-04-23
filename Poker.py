@@ -1,70 +1,85 @@
+def settlePokerGame(players, buyInAmount):
+    results = []
+    totalChips = 0
+    totalInvested = 0
 
-firstNames = []
-chipTotals = []
-buyBacks = []
-buyIn = 0
-totalChips = 0
+    for player in players:
+        name = player["name"]
+        chips = player["chips"]
+        buyIns = player["buyIns"]
+        invested = buyIns * buyInAmount
+        net = chips - invested
 
-# count is for how many people were in your game loop
-count = 0
+        totalChips += chips
+        totalInvested += invested
 
+        results.append({
+            "name": name,
+            "chips": chips,
+            "buyIns": buyIns,
+            "invested": invested,
+            "net": net
+        })
 
-def getTotalChipCount(chipTotals): 
-    chipCount = 0
-    j = 0
-    for i in chipTotals:
-        if (buyBacks[j] > 1):
-            chipCount += i + (buyBacks[j] * buyIn)
-            j+=1
-        else:
-            chipCount += i
-            j+=1
-    return chipCount
+    # 💥 Error check
+    if round(totalChips, 2) != round(totalInvested, 2):
+        print("  Error: The total chips do not match the total money put into the game.")
+        print(f"  Total invested: ${totalInvested:.2f}")
+        print(f"  Total chips counted: ${totalChips:.2f}")
+        print("  Please check the numbers and try again.")
+        return None
 
+    winners = [p for p in results if p["net"] > 0]
+    losers = [p for p in results if p["net"] < 0]
 
-def distributeChips(firstNames, chipCount, chipTotals):
-    # Best Variable Names Ever
-    owePeople = []
-    owedPeople = []
-    chipTotalsSorted = chipTotals.sort()
+    transactions = []
 
-    # fill up owe and owed, people who broke even should be 
-    for chips in range(len(chipTotalsSorted)):
-        if chips <= 500:
-            owePeople.append(chips)
-        else: 
-            owedPeople.append(chips)
-    print("owePeople : " + str(owePeople) + "\n" + "owedPeople: " + str(owedPeople))
-    
+    for loser in losers:
+        amountOwed = -loser["net"]
+        for winner in winners:
+            if winner["net"] == 0:
+                continue
+            share = min(amountOwed, winner["net"])
+            transactions.append(f'{loser["name"]} pays {winner["name"]} ${share:.2f}')
+            loser["net"] += share
+            winner["net"] -= share
+            amountOwed -= share
+            if amountOwed <= 0:
+                break
 
-    
-    
-
-
-
-# Gather information
-numPeople = int(input("How many people were in your game? "))
-buyIn = int(input("What was the buyIn for your game? "))
-while count < numPeople:
-    firstName = input("Player first name: ")
-    chipTotal = int(input("How many chips did you have at the end of the game? "))
-    buyBack = int(input("How many times did you buy back in? (excluding the first buy in) "))
-
-    firstNames.append(firstName)
-    chipTotals.append(chipTotal)
-    buyBacks.append(buyBack)
-    count+=1
-
-chipCount = getTotalChipCount(chipTotals)
-
-print(firstNames, chipTotals, buyBacks)
-print("\n")
-print(chipTotals)
-print("\n")
-distributeChips(firstNames, chipCount, chipTotals)
-# math time 
+    return transactions
 
 
+def main():
+    print("Poker Chip Settlement Calculator")
+    numPlayers = int(input("How many players were in the game? "))
+    buyInAmount = float(input("What was the buy in amount? $"))
+
+    players = []
+
+    for i in range(numPlayers):
+        print(f"\nPlayer {i+1}:")
+        name = input("  Name: ")
+        buyIns = int(input("  Number of buy-ins: "))
+        chips = float(input("  Final chip total: $"))
+        players.append({
+            "name": name,
+            "buyIns": buyIns,
+            "chips": chips
+        })
+
+    settlements = settlePokerGame(players, buyInAmount)
+
+    if settlements is None:
+        return
+
+    print("\n$$$ Settlement Summary:")
+    if not settlements:
+        print("No one owes anyone anything.")
+    else:
+        for t in settlements:
+            print(t)
 
 
-    
+if __name__ == "__main__":
+    main()
